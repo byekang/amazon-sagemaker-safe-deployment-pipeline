@@ -2,32 +2,32 @@
 
 ## Introduction
 
-This is a sample solution to build a safe deployment pipeline for Amazon SageMaker.  This example could be useful for any organization looking to operationalize machine learning with native AWS development tools such as AWS CodePipeline, AWS CodeBuild and AWS CodeDeploy.
+이것은 Amazon SageMaker를 위한 안전한 배치 파이프라인을 구축하기 위한 샘플 솔루션입니다. 이 예는 AWS CodePipeline, AWS CodeBuild 및 AWS CodeDeploy와 같은 기본 AWS 개발 도구를 사용하여 머신러닝을 운영하려는 모든 조직에 유용할 수 있습니다.
 
-This solution provides as *safe* deployment by creating an AWS Lambda API that calls into an Amazon SageMaker Endpoint for real-time inference.
+이 솔루션은 실시간 추론을 위해 Amazon SageMaker Endpoint를 호출하는 AWS Lambda API를 생성하여 *안전한* 배포 기능을 제공합니다.
 
 ##  Architecture
 
-Following is a diagram of the continuous delivery stages in the AWS Code Pipeline.
+다음은 AWS 코드 파이프라인의 Continuous Delivery 단계 다이어그램입니다.
 
-1. Build Artifacts: Runs a AWS CodeBuild job to create AWS CloudFormation templates.
-2. Train: Trains an Amazon SageMaker pipeline and Baseline Processing Job
-3. Deploy Dev: Deploys a development Amazon SageMaker Endpoint
-4. Deploy Prod: Deploys an AWS API Gateway Lambda in front of Amazon SageMaker Endpoints using AWS CodeDeploy for blue/green deployment and rollback.
+1. Build Artifacts: AWS CodeBuild 작업을 실행하여 AWS CloudFormation 템플릿을 생성합니다.
+2. Train: Amazon SaigMaker 파이프라인 및 기준선 처리 작업을 교육합니다.
+3. Deploy Dev: Amazon SageMaker 끝점을 개발합니다.
+4. Deploy Prod: 파란색/녹색 배포 및 롤백을 위해 AWS CodeDeploy를 사용하여 Amazon SageMaker Endpoints 앞에 AWS API Gateway Lambda를 배포합니다.
 
 ![code-pipeline](docs/code-pipeline.png)
 
 ###  Components Details
 
-  - [**AWS SageMaker**](https://aws.amazon.com/sagemaker/) – This solution uses SageMaker to train the model to be used and host the model at an endpoint, where it can be accessed via HTTP/HTTPS requests
-  - [**AWS CodePipeline**](https://aws.amazon.com/codepipeline/) – CodePipeline has various stages defined in CloudFormation which step through which actions must be taken in which order to go from source code to creation of the production endpoint.
-  - [**AWS CodeBuild**](https://aws.amazon.com/codebuild/) – This solution uses CodeBuild to build the source code from GitHub
-  - [**AWS CloudFormation**](https://aws.amazon.com/cloudformation/) – This solution uses the CloudFormation Template language, in either YAML or JSON, to create each resource including custom resource.
-  - [**AWS S3**](https://aws.amazon.com/s3/) – Artifacts created throughout the pipeline as well as the data for the model is stored in an Simple Storage Service (S3) Bucket.
+  - [**AWS SageMaker**](https://aws.amazon.com/sagemaker/) – 이 솔루션은 SageMaker를 사용하여 사용할 모델을 교육하고 엔드포인트에서 모델을 호스팅합니다. 여기서 HTTP/HTTPS 요청을 통해 모델에 액세스할 수 있습니다.
+  - [**AWS CodePipeline**](https://aws.amazon.com/codepipeline/) – CodePipeline에는 CloudFormation에 정의된 다양한 단계가 있으며, 이 단계를 통해 소스 코드에서 프로덕션 끝점을 생성하기 위해 필요한 작업을 수행할 수 있습니다.
+  - [**AWS CodeBuild**](https://aws.amazon.com/codebuild/) – 이 솔루션은 CodeBuild를 사용하여 GitHub에서 소스 코드를 빌드합니다.
+  - [**AWS CloudFormation**](https://aws.amazon.com/cloudformation/) – 이 솔루션은 YAML 또는 JSON의 CloudFormation Template 언어를 사용하여 사용자 지정 리소스를 포함한 각 리소스를 생성합니다.
+  - [**AWS S3**](https://aws.amazon.com/s3/) – 모델 데이터뿐만 아니라 파이프라인 전체에서 생성된 아티팩트는 S3(Simple Storage Service) 버킷에 저장됩니다.
 
 ## Deployment Steps
 
-Following is the list of steps required to get up and running with this sample.
+다음은 이 샘플로 시작하고 실행하는 데 필요한 단계 목록입니다.
 
 ###  Prepare an AWS Account
 
@@ -35,30 +35,30 @@ Create your AWS account at [http://aws.amazon.com](http://aws.amazon.com) by fol
 
 ###  Optionally Fork this GitHub Repository and create an Access Token
  
-1. [Fork](https://github.com/aws-samples/sagemaker-safe-deployment-pipeline/fork) a copy of this repository into your own GitHub account by clicking the **Fork** in the upper right-hand corner.
-2. Follow the steps in the [GitHub documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) to create a new (OAuth 2) token with the following scopes (permissions): `admin:repo_hook` and `repo`. If you already have a token with these permissions, you can use that. You can find a list of all your personal access tokens in [https://github.com/settings/tokens](https://github.com/settings/tokens).  
-3. Copy the access token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.  If you have lost your token, you can [regenerate](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-authentication.html#GitHub-rotate-personal-token-CLI) your token.
+1. [Fork](https://github.com/chris-chris/sagemaker-safe-deployment-pipeline/fork) 오른쪽 상단 모서리에 있는 **Fork**를 클릭하여 이 리포지토리의 복사본을 GitHub 계정에 넣습니다.
+2. [GitHub documentation](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)의 단계에 따라 범위(`admin:repo_hook`) 및 `repo`를 사용하여 새 (OAuth 2) 토큰을 생성합니다. 이러한 권한을 가진 토큰이 이미 있는 경우 이를 사용할 수 있습니다. 모든 개인 액세스 토큰 목록은 [https://github.com/settings/tokens](https://github.com/settings/tokens)에서 확인할 수 있습니다.
+3. 액세스 토큰을 클립보드에 복사합니다. 보안상의 이유로 페이지 밖으로 이동한 후에는 토큰을 다시 볼 수 없습니다. 토큰을 분실한 경우 [재생성](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-authentication.html#GitHub-rotate-personal-token-CLI) 할 수 있습니다.
 
 ###  Launch the AWS CloudFormation Stack
 
-Click on the **Launch Stack** button below to launch the CloudFormation Stack to set up the SageMaker safe deployment pipeline.
+아래의 **Launch Stack** 버튼을 클릭하여 CloudFormation Stack을 시작하여 SageMaker 안전 배포 파이프라인을 설정합니다.
 
-[![Launch CFN stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateUrl=https%3A%2F%2Famazon-sagemaker-safe-deployment-pipeline.s3.amazonaws.com%2Fpipeline.yml&stackName=nyctaxi&param_GitHubBranch=master&param_GitHubRepo=amazon-sagemaker-safe-deployment-pipeline&param_GitHubUser=aws-samples&param_ModelName=nyctaxi&param_NotebookInstanceType=ml.t3.medium)
+[![Launch CFN stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/quickcreate?templateUrl=https%3A%2F%2Famazon-sagemaker-safe-deployment-pipeline.s3.amazonaws.com%2Fpipeline.yml&stackName=nyctaxi&param_GitHubBranch=master&param_GitHubRepo=amazon-sagemaker-safe-deployment-pipeline&param_GitHubUser=chris-chris&param_ModelName=nyctaxi&param_NotebookInstanceType=ml.t3.medium)
 
-Provide a stack name eg **sagemaker-safe-deployment-pipeline** and specify the parameters
+**sagemaker-safe-deployment-pipeline**과 같은 스택 이름을 제공하고 매개 변수를 지정합니다.
 
 Parameters | Description
 ----------- | -----------
-Model Name | A unique name for this model (must less then 15 characters long).
-Notebook Instance Type | The [Amazon SageMaker instance type](https://aws.amazon.com/sagemaker/pricing/instance-types/). Default is ml.t3.medium
-GitHub Repository | The name (not URL) of the GitHub repository to pull from.
-GitHub Branch | The name (not URL) of the GitHub repository’s branch to use.
-GitHub Username | GitHub Username for this repository.  Update this if you have Forked the repository.
-GitHub Access Token | The Optional Secret OAuthToken with access to your GitHub repo.
+Model Name | 이 모델의 고유한 이름입니다(길이 15자 미만이어야 합니다).
+Notebook Instance Type | [Amazon SageMaker 인스턴스 유형](https://aws.amazon.com/sagemaker/pricing/instance-types/)입니다. 기본값은 ml.t3.medium입니다.
+GitHub Repository | 가져올 GitHub 저장소의 이름(URL이 아님)입니다.
+GitHub Branch | 사용할 GitHub 리포지토리 분기의 이름(URL이 아님)입니다.
+GitHub Username | 이 리포지토리의 GitHub 사용자 이름입니다. 리포지토리를 Forked한 경우 업데이트합니다.
+GitHub Access Token | GitHub repo에 대한 액세스 권한이 있는 옵션 비밀 OAuthToken입니다.
 
 ![code-pipeline](docs/stack-parameters.png)
 
-You can launch the same stack using the AWS CLI. Here's an example:
+AWS CLI를 사용하여 동일한 스택을 시작할 수 있습니다. 다음은 다음과 같은 예입니다.
 
 `
  aws cloudformation create-stack --stack-name sagemaker-safe-deployment \
@@ -72,33 +72,33 @@ You can launch the same stack using the AWS CLI. Here's an example:
 
 ###  Start, Test and Approve the Deployment
 
-Once the deployment has completed, there will be a new AWS CodePipeline created linked to your GitHub source.  You will notice initially that it will be in a *Failed* state as it is waiting on an S3 data source.
+배포가 완료되면 GitHub 소스에 연결된 새 AWS CodePipeline이 생성됩니다. 처음에는 S3 데이터 원본에서 대기 중이므로 *Failed* 상태가 됩니다.
 
 ![code-pipeline](docs/data-source-before.png)
 
-Launch the newly created SageMaker Notebook in your [AWS console](https://aws.amazon.com/getting-started/hands-on/build-train-deploy-machine-learning-model-sagemaker/), navigate to the `notebook` directory and opening the notebook by clicking on the `mlops.ipynb` link.
+[AWS 콘솔](https://aws.amazon.com/getting-started/hands-on/build-train-deploy-machine-learning-model-sagemaker/)에서 새로 만든 SageMaker 노트북을 열어서 `notebook` directory로 이동한 후 `mlops.ipynb` 링크를 클릭하여 노트북을 엽니다.
 
 ![code-pipeline](docs/sagemaker-notebook.png)
 
-Once the notebook is running, you will be guided through a series of steps starting with downloading the  [New York City Taxi](https://registry.opendata.aws/nyc-tlc-trip-records-pds/) dataset, uploading this to an Amazon SageMaker S3 bucket along with the data source meta data to trigger a new build in the AWS CodePipeline.
+노트북이 실행되면 [뉴욕 시티 택시](https://registry.opendata.aws/nyc-tlc-trip-records-pds/) 데이터 세트 다운로드부터 시작하여 데이터 소스 메타데이터와 함께 Amazon SageMaker S3 버킷에 업로드하여 AWS Pipe에서 새 빌드를 트리거합니다.
 
 ![code-pipeline](docs/datasource-after.png)
 
-Once your pipeline is kicked off it will run model training and deploy a development SageMaker Endpoint.  
+파이프라인이 시작되면 모델 학습을 실행하고 개발 SageMaker Endpoint를 배포합니다.
 
-There is a manual approval step which you can action directly within the SageMaker Notebook to promote this to production, send some traffic to the live endpoint and create a REST API.
+SageMaker 노트북 내에서 직접 작업을 수행하여 이를 프로덕션으로 승격하고 일부 트래픽을 라이브 엔드포인트로 전송하며 REST API를 생성할 수 있는 수동 승인 단계가 있습니다.
 
 ![code-pipeline](docs/cloud-formation.png)
 
-Subsequent deployments of the pipeline will use AWS CodeDeploy to perform a blue/green deployment to shift traffic from the Original to Replacement endpoint over a period of 5 minutes.
+이후 파이프라인을 배포한 후에는 AWS CodeDeploy를 사용하여 파란색/녹색 배포를 수행하여 트래픽을 원래 끝점에서 교체 엔드포인트로 5분 동안 이동합니다.
 
 ![code-pipeline](docs/code-deploy.gif)
 
-Finally, the SageMaker Notebook provides the ability to retrieve the results from the Monitoring Schedule that is run on the hour.
+마지막으로 SageMaker 노트북은 시간에 따라 실행되는 모니터링 예약에서 결과를 검색할 수 있는 기능을 제공합니다.
 
 ###  Approximate Times:
 
-Following is a lis of approximate running times fo the pipeline
+다음은 파이프라인에 대한 대략적인 작동 시간 목록입니다.
 
 * Full Pipeline: 35 minutes
 * Start Build: 2 Minutes
