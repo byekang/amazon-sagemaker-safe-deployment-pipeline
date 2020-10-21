@@ -109,7 +109,7 @@ SageMaker 노트북 내에서 직접 작업을 수행하여 이를 프로덕션�
 
 ## Customizing for your own model
 
-This project is written in Python, and design to be customized for your own model and API.
+Python으로 작성된 프로젝트이며, 사용자 고유의 모델과 API에 맞게 맞춤 설계됩니다.
 
 ```
 .
@@ -127,43 +127,43 @@ This project is written in Python, and design to be customized for your own mode
 └── pipeline.yml
 ```
 
-Edit the `get_training_params` method in the `model/run.py` script that is run as part of the AWS CodeBuild step to add your own estimator or model definition.
+AWS CodeBuild 단계의 일부로 실행되는 `model/run.py` 스크립트에서 `get_training_params` 메서드를 편집하여 자체 추정기 또는 모델 정의를 추가합니다.
 
-Extend the AWS Lambda hooks in `api/pre_traffic_hook.py` and `api/post_traffic_hook.py` to add your own validation or inference against the deployed Amazon SageMaker endpoints.  Also you can edit the `api/app.py` lambda to add any enrichment or transformation to the request/response payload.
+AWS 람다 후크를 `api/pre_traffic_hook.py` 및 `api/post_traffic_hook.py`로 확장하여 배포된 Amazon SageMaker 엔드포인트에 대한 사용자 자신의 유효성 검사 또는 추론을 추가합니다. 또한 `api/app.py` 람다를 편집하여 요청/응답 페이로드에 농축 또는 변환을 추가할 수 있습니다.
 
 ## Running Costs
 
-This section outlines cost considerations for running the SageMaker Safe Deployment Pipeline.  Completing the pipeline will deploy development and production SageMaker endpoints which will cost less than $10 per day.  Further cost breakdowns are below.
+이 섹션에서는 SageMaker Safe Deployment Pipeline을 실행하기 위한 비용 고려 사항을 설명합니다. 파이프라인을 완료하면 개발 및 프로덕션 SageMaker 엔드포인트가 구축되며, 이 엔드포인트는 하루에 10달러 미만입니다. 추가 비용 분석은 다음과 같습니다.
 
-- **CodeBuild** – Charges per minute used. First 100 minutes each month come at no charge. For information on pricing beyond the first 100 minutes, see [AWS CodeBuild Pricing](https://aws.amazon.com/codebuild/pricing/).
-- **CodeCommit** – $1/month if you didn't opt to use your own GitHub repository.
-- **CodeDeploy** – No cost with AWS Lambda.
-- **CodePipeline** – CodePipeline costs $1 per active pipeline* per month. Pipelines are free for the first 30 days after creation. More can be found at [AWS CodePipeline Pricing](https://aws.amazon.com/codepipeline/pricing/).
-- **CloudWatch** - This template includes a [Canary](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html), 1 dashboard and 4 alarms (2 for deployment, 1 for model drift and 1 for canary) which costs less than $10 per month.
-  - Canaries cost $0.0012 per run, or $5/month if they run every 10 minutes.
-  - Dashboards cost $3/month.
-  - Alarm metrics cost $0.10 per alarm.
-- **KMS** – $1/month for the key created.
-- **Lambda** - Low cost, $0.20 per 1 million request see [Amazon Lambda Pricing](https://aws.amazon.com/lambda/pricing/)
-- **SageMaker** – Prices vary based on EC2 instance usage for the Notebook Instances, Model Hosting, Model Training and Model Monitoring; each charged per hour of use. For more information, see [Amazon SageMaker Pricing](https://aws.amazon.com/sagemaker/pricing/).
-  - The `ml.t3.medium` instance *notebook* costs $0.0582 an hour.
-  - The `ml.m4.xlarge` instance for the *training* job costs $0.28 an hour.
-  - The `ml.m5.xlarge` instance for the *monitoring* baseline costs $0.269 an hour.
-  - The `ml.t2.medium` instance for the dev *hosting* endpoint costs $0.065 an hour. 
-  - The two `ml.m5.large` instances for production *hosting* endpoint costs 2 x $0.134 per hour.
-  - The `ml.m5.xlarge` instance for the hourly scheduled *monitoring* job costs $0.269 an hour.
-- **S3** – Prices Vary, depends on size of model/artifacts stored. For first 50 TB each month, costs only $0.023 per GB stored. For more information, see [Amazon S3 Pricing](https://aws.amazon.com/s3/pricing/).
+- **CodeBuild** – 분당 요금이 사용됩니다. 매달 처음 100분은 무료로 제공됩니다. 처음 100분 이후의 가격에 대한 정보는 [AWS CodeBuild Pricing](https://aws.amazon.com/codebuild/pricing/))을 참조하시기 바랍니다.
+- **CodeCommit** – GitHub 저장소를 사용하지 않을 경우 월 1달러입니다.
+- **CodeDeploy** – AWS 람다에는 비용이 들지 않습니다.
+- **CodePipeline** – CodePipeline은 매월 액티브 파이프라인당 $1의 비용이 소요됩니다*. 파이프라인은 생성 후 처음 30일 동안 무료입니다. 자세한 내용은 [AWS CodePipeline Priceing](https://aws.amazon.com/codepipeline/pricing/)에서 확인할 수 있습니다.
+- **CloudWatch** - 이 템플릿에는 [Canarary](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html), 1 대시보드와 4개의 경보(구축의 경우 2, 모델 드리프트의 경우 1, 카나리의 경우 1개)가 포함되어 있습니다. 이 경보는 월 10달러 미만입니다.
+  - Canaries는 실행당 $0.0012 또는 10분마다 실행될 경우 월 $5입니다.
+  - Dashboard는 한 달에 3달러입니다.
+  - Alert 메트릭의 비용은 경보당 0.10달러입니다.
+- **KMS** – 생성된 키에 대해 매달 1달러씩 지불합니다.
+- **Lambda** - 저렴한 비용, 100만 명당 $0.20(Amazon Lambda Priceing)을 참조합니다. [Amazon Lambda Priceing](https://aws.amazon.com/lambda/pricing/)
+- **SageMaker** – 가격은 노트북 인스턴스, 모델 호스팅, 모델 교육 및 모델 모니터링의 EC2 인스턴스 사용량에 따라 다릅니다. 각 인스턴스의 사용 시간은 시간당 청구됩니다. 자세한 정보는 [Amazon SageMaker Priceing](https://aws.amazon.com/sagemaker/pricing/)을 참조하시기 바랍니다.
+- ml.t3.medium 인스턴스 *노트북*의 가격은 시간당 0.0582달러입니다.
+- *학습* 작업의 ml.m4.xlarge 인스턴스(instance)는 시간당 0.28달러입니다.
+- *모니터링* 기준의 ml.m5.xlarge 인스턴스 가격은 시간당 0.269달러입니다.
+- dev *hosting* endpoint의 ml.t2.medium 인스턴스는 시간당 0.065달러입니다.
+- production *hosting* Endpoint에 대한 두 'ml.m5.large' 인스턴스의 경우 시간당 2달러 0.134센트입니다.
+- 매시간 예정된 *모니터링* 작업의 ml.m5.xlarge 인스턴스는 시간당 0.269달러입니다.
+- **S3** – 가격은 저장된 모델/기술의 크기에 따라 달라집니다. 매월 처음 50TB의 경우 저장되는 GB당 0.023달러밖에 들지 않습니다. 자세한 내용은 [Amazon S3 Priceing](https://aws.amazon.com/s3/pricing/))을 참조하시기 바랍니다.
 
 ## Cleaning Up
 
-First delete the stacks used as part of the pipeline for deployment, training job and suggest baseline.  For a model name of **nyctaxi** that would be.
+먼저 배포, 학습 작업 및 제안된 베이스라인의 파이프라인의 일부 스택을 삭제합니다. **nyctaxi**의 모델명은 다음과 같습니다.
 
 * *nyctaxi*-devploy-prd
 * *nyctaxi*-devploy-dev
 * *nyctaxi*-training-job
 * *nyctaxi*-suggest-baseline
 
-Then delete the stack you created. 
+그런 다음 당신이 생성한 스택을 삭제합니다.
 
 ## Security
 
@@ -171,5 +171,5 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 ## License
 
-This library is licensed under the MIT-0 License. See the LICENSE file.
+이 라이브러리는 MIT-0 라이센스에 따라 라이센스가 부여됩니다. LICENSE 파일을 확인합니다.
 
